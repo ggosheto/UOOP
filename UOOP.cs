@@ -1,78 +1,57 @@
-// Създаваме нов автомобил
-        Vehicle car = new Vehicle("Toyota", "Corolla", 120, "Червен");
+ static void Main()
+    {
+        Console.Write("Number of rows: ");
+        int rows = int.Parse(Console.ReadLine());
 
-        // Показваме информацията
-        car.DisplayInfo();
+        Console.Write("Number of columns: ");
+        int cols = int.Parse(Console.ReadLine());
 
-        Console.WriteLine("\n-- След тунинг --");
+        int[,] matrix = new int[rows, cols];
 
-        // Правим тунинг - променяме модел, скорост и цвят
-        car.Tune("Supra", 250, "Черен");
+        // Input the matrix
+        for (int i = 0; i < rows; i++)
+        {
+            Console.WriteLine($"Enter elements for row {i + 1}, separated by space:");
+            string[] parts = Console.ReadLine().Split();
 
-        // Показваме отново информацията
-        car.DisplayInfo();
-
-internal class Vehicle
-{
-    private string _name;
-    private string _model;
-    private int _speed;
-    private string _color;
-
-    public string Name
-    { get; set; }
-
-    public string Model
-    { get; set; }
-
-    public int Speed
-    { get { return _speed; }
-        set {
-            if (value > 0)
+            for (int j = 0; j < cols; j++)
             {
-                _speed = value;
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("The Speed must be a positive number");
+                matrix[i, j] = int.Parse(parts[j]);
             }
         }
+
+        // Find minimum elements per column
+        int[] minElements = new int[cols];
+
+        for (int col = 0; col < cols; col++)
+        {
+            int min = matrix[0, col];
+            for (int row = 1; row < rows; row++)
+            {
+                if (matrix[row, col] < min)
+                {
+                    min = matrix[row, col];
+                }
+            }
+            minElements[col] = min;
+        }
+
+        // Print the matrix
+        Console.WriteLine("The matrix is:");
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                Console.Write($"{matrix[i, j],5}");
+            }
+            Console.WriteLine();
+        }
+
+        // Print the minimum elements row
+        Console.WriteLine("Minimum elements per column:");
+        for (int j = 0; j < cols; j++)
+        {
+            Console.Write($"{minElements[j],5}");
+        }
+        Console.WriteLine();
     }
-
-    public string Color
-    { get; set; }
-
-    public Vehicle() 
-    {
-        _name = "";
-        _model = "";
-        _color = "";
-        _speed = 0;
-    }
-
-    public Vehicle(string name, string model, int speed, string color)
-    {
-        _name = name;
-        _model = model;
-        _speed = speed;
-        _color = color;
-    }
-
-    public void VehicleInfo()
-    {
-        Console.WriteLine("--Vehicle Info--\n");
-        Console.WriteLine($"Vehicle name: {_name}");
-        Console.WriteLine($"Vehicle model: {_model}");
-        Console.WriteLine($"Vehicle speed: {_speed}");
-        Console.WriteLine($"Vehicle color: {_color}");
-    }
-
-    
-        public void Tune(string newModel, int newSpeed, string newColor)
-    {
-        _model = newModel;
-        _speed = newSpeed;
-        _color = newColor;
-    }
-
-}
