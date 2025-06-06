@@ -1,57 +1,101 @@
- static void Main()
+using System;
+
+class Program
+{
+    static void Main()
     {
-        Console.Write("Number of rows: ");
-        int rows = int.Parse(Console.ReadLine());
+        // Read matrix size
+        Console.Write("Enter number of rows and columns (e.g. 3 3): ");
+        string[] input = Console.ReadLine().Split();
+        int n = int.Parse(input[0]);
+        int m = int.Parse(input[1]);
 
-        Console.Write("Number of columns: ");
-        int cols = int.Parse(Console.ReadLine());
+        int[,] ticket = new int[n, m];
 
-        int[,] matrix = new int[rows, cols];
-
-        // Input the matrix
-        for (int i = 0; i < rows; i++)
+        // Read matrix rows
+        Console.WriteLine("Enter the matrix rows (numbers separated by space):");
+        for (int i = 0; i < n; i++)
         {
-            Console.WriteLine($"Enter elements for row {i + 1}, separated by space:");
-            string[] parts = Console.ReadLine().Split();
-
-            for (int j = 0; j < cols; j++)
+            Console.Write($"Row {i + 1}: ");
+            string[] rowInput = Console.ReadLine().Split();
+            for (int j = 0; j < m; j++)
             {
-                matrix[i, j] = int.Parse(parts[j]);
+                ticket[i, j] = int.Parse(rowInput[j]);
             }
         }
 
-        // Find minimum elements per column
-        int[] minElements = new int[cols];
+        int mainDiagonalSum = 0;
+        int secondaryDiagonalSum = 0;
+        int sumAboveMainDiagonal = 0;
+        int sumBelowMainDiagonal = 0;
+        int evenOnMainDiagonalSum = 0;
+        int evenOnOuterRowsSum = 0;
+        int oddOnOuterColumnsSum = 0;
 
-        for (int col = 0; col < cols; col++)
+        // Calculate sums
+        for (int i = 0; i < n; i++)
         {
-            int min = matrix[0, col];
-            for (int row = 1; row < rows; row++)
+            for (int j = 0; j < m; j++)
             {
-                if (matrix[row, col] < min)
+                int value = ticket[i, j];
+
+                if (i == j) // on main diagonal
                 {
-                    min = matrix[row, col];
+                    mainDiagonalSum += value;
+                    if (value % 2 == 0)
+                    {
+                        evenOnMainDiagonalSum += value;
+                    }
+                }
+
+                if (i + j == n - 1) // on secondary diagonal
+                {
+                    secondaryDiagonalSum += value;
+                }
+
+                if (i < j) // above main diagonal
+                {
+                    sumAboveMainDiagonal += value;
+                }
+
+                if (i > j) // below main diagonal
+                {
+                    sumBelowMainDiagonal += value;
+                }
+
+                if (i == 0 || i == n - 1) // outer rows
+                {
+                    if (value % 2 == 0)
+                    {
+                        evenOnOuterRowsSum += value;
+                    }
+                }
+
+                if (j == 0 || j == m - 1) // outer columns
+                {
+                    if (value % 2 == 1)
+                    {
+                        oddOnOuterColumnsSum += value;
+                    }
                 }
             }
-            minElements[col] = min;
         }
 
-        // Print the matrix
-        Console.WriteLine("The matrix is:");
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                Console.Write($"{matrix[i, j],5}");
-            }
-            Console.WriteLine();
-        }
+        // Check winning conditions
+        bool isWinner = 
+            mainDiagonalSum == secondaryDiagonalSum &&
+            sumAboveMainDiagonal % 2 == 0 &&
+            sumBelowMainDiagonal % 2 == 1;
 
-        // Print the minimum elements row
-        Console.WriteLine("Minimum elements per column:");
-        for (int j = 0; j < cols; j++)
+        if (isWinner)
         {
-            Console.Write($"{minElements[j],5}");
+            double prize = (sumBelowMainDiagonal + evenOnMainDiagonalSum + evenOnOuterRowsSum + oddOnOuterColumnsSum) / 4.0;
+            Console.WriteLine("YES");
+            Console.WriteLine($"Prize: {prize:F2}");
         }
-        Console.WriteLine();
+        else
+        {
+            Console.WriteLine("NO");
+        }
     }
+}
